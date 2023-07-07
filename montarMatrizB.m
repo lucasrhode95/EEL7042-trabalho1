@@ -1,7 +1,7 @@
 function B = montarMatrizB(impedanciasDeLinha, matrizIncidenciaBarraLinha)
+    nb = size(matrizIncidenciaBarraLinha)(1);
     B = zeros(nb, nb);
 
-    nb = size(matrizIncidenciaBarraLinha)(1);
     admitancias = 1./impedanciasDeLinha;
     for (i = 1:nb)
         for (j = 1:nb)
