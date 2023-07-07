@@ -71,3 +71,6 @@ A(4, 5) =  1; % barra 4
 % linha 6 (b1->b5)
 A(1, 6) =  1; % barra 1
 A(5, 6) = -1; % barra 5
+
+%% matriz B
+B = montarMatrizB(diag(X), A);
