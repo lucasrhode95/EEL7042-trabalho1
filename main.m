@@ -21,7 +21,7 @@ Pd0 = [
     1;   % carga 3 na barra 3
     0;   % nenhuma carga na barra 4
     0;   % nenhuma carga na barra 5
-]
+];
 % matriz de incidência de cargas cortáveis
 Um = zeros(nb, nc);
 Um(1,1) = 1; % carga 1 na barra 1
@@ -93,12 +93,12 @@ A(5, 6) = -1; % barra 5
 % matriz B
 B = montarMatrizB(impedanciasDeLinha, A);
 
-%% Barra Vθ
-nr = nb - 1; % quantidade de barras menos barra Vθ
+%% Redução da Barra Vθ
+nr          = nb - 1; % quantidade de barras menos barra Vθ
 barraVTheta = 1;
-Bred = removeColuna(barraVTheta, B);
-Ared = removeLinha(barraVTheta, A);
-Agred = removeLinha(barraVTheta, Ag);
+Bred        = removeColuna(barraVTheta, B);
+Ared        = removeLinha(barraVTheta, A);
+Agred       = removeLinha(barraVTheta, Ag);
 
 
 
@@ -109,21 +109,16 @@ DeltaPd = 0.05*Um'*Pd0; % corte de carga inicial = 5%
 Theta   = zeros(nr, 1);
 Lambdas = ones(nr, 1);
 
-
 % variáveis de folga S
-s1 = Pg - PgMin;
-s2 = -Tmin;
-s3 = -Pg + PgMax;
-s4 = Tmax;
-s5 = DeltaPd;
+s1     = Pg - PgMin;
+s2     = -Tmin;
+s3     = -Pg + PgMax;
+s4     = Tmax;
+s5     = DeltaPd;
 vetorS = [s1; s2; s3; s4; s5];
+
 % variáveis de folga PI
-pi1 = s1./mu;
-pi2 = s2./mu;
-pi3 = s3./mu;
-pi4 = s4./mu;
-pi5 = s5./mu;
-vetorPi = [pi1; pi2; pi3; pi4; pi5];
+vetorPi = vetorS./mu;
 
 
 %% MATRIZ HESSIANA
