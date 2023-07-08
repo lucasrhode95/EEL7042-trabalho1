@@ -113,42 +113,4 @@ vetorPi = [pi1; pi2; pi3; pi4; pi5];
 
 
 %% MATRIZ HESSIANA
-nvar = nc + ng + nr; % quantidade de variáveis otimizadas (ou dimensão do vetor u)
-
-L_u_u = [
-%    deltaPd           Pg           Theta
-    zeros(nc,nc), zeros(nc,ng), zeros(nc,nr); % deltaPd
-    zeros(ng,nc), zeros(ng,ng), zeros(ng,nr); % Pg
-    zeros(nr,nc), zeros(nr,ng), zeros(nr,nr); % Theta
-];
-
-L_u_y = [
-%    lambda
-       Um';  % deltaPd
-       Ag';  % Pg
-    -Bred';  % Theta
-];
-
-% Obs: transformamos o problema para que só houvessem PI máx e nenhum PI min
-L_u_pi = [
-%       pi1           pi2           pi3           pi4           pi5
-    zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl), zeros(nc,nc); % deltaPd
-     -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
-    zeros(nr,ng),   -Ared*Xinv, zeros(nr,ng),    Ared*Xinv, zeros(nr,nc); % Theta
-];
-
-L_u_s   = zeros(nvar, ndes);
-L_y_y   = zeros(nigual, nigual);
-L_y_pi  = zeros(nigual, ndes);
-L_y_s   = zeros(nigual, ndes);
-L_pi_pi = zeros(ndes, ndes);
-L_pi_s  = eye(ndes, ndes);
-L_s_pi  = diag(vetorS);
-L_s_s   = diag(vetorPi);
-
-W = [
-     L_u_u   L_u_y   L_u_pi  L_u_s;
-     L_u_y'  L_y_y   L_y_pi  L_y_s;
-    L_u_pi'  L_y_pi' L_pi_pi L_pi_s;
-    L_u_s'   L_y_s'  L_s_pi  L_s_s;
-];
+W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
