@@ -1,5 +1,6 @@
 clear();
 clc();
+addpath(genpath("helpers_topologia_do_sistema"));
 
 nb     = 5; % número de barras
 nc     = 3; % número de cargas
