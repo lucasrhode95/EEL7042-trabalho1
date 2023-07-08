@@ -1,6 +1,7 @@
 clear();
 clc();
 addpath(genpath("helpers_topologia_do_sistema"));
+addpath(genpath("helpers_metodo_newton"));
 
 nb     = 5; % número de barras
 nc     = 3; % número de cargas
@@ -141,3 +142,5 @@ deltaZ = iteracaoMetodoNewton(
     mu, Lambda, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
     Um, Ag, A, B, Xinv
 );
+
+restoredefaultpath();
