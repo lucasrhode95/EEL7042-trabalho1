@@ -6,10 +6,11 @@ nc     = 3; % número de cargas
 ng     = 3; % número de geradores
 wcc    = 1; % índice de ponderação
 nl     = 6; % número de linhas
+nigual = 5; % número de restrições de igualdade (se adicionar mais restrições, é preciso atualizar a matriz W)
 
 % peso dos cortes de carga ($/MWpu)
 % (problema não deu valores, assumindo peso uniforme = 1)
-alpha = ones(nc, 1);
+Alpha = ones(nc, 1);
 
 %% DEMANDA
 % matriz de demanda inicial
@@ -104,7 +105,7 @@ mu      = 0.1;
 Pg      = (PgMax+PgMin)/2;
 DeltaPd = 0.05*Um'*Pd0; % corte de carga inicial = 5%
 Theta   = zeros(nr, 1);
-Lambdas = ones(nr, 1);
+Lambdas = ones(nigual, 1);
 
 % variáveis de folga S
 s1     = Pg - PgMin;
@@ -115,8 +116,36 @@ s5     = DeltaPd;
 vetorS = [s1; s2; s3; s4; s5];
 
 % variáveis de folga PI
-vetorPi = vetorS./mu;
+pi1     = s1./mu;
+pi2     = s2./mu;
+pi3     = s3./mu;
+pi4     = s4./mu;
+pi5     = s5./mu;
+vetorPi = [pi1; pi2; pi3; pi4; pi5];
 
 
 %% MATRIZ HESSIANA
-W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
+W    = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
+Winv = inv(W);
+
+%% Método de Newton
+u = [
+    DeltaPd;
+    Pg;
+    Theta;
+];
+z = [
+    u;
+    Lambdas;
+    vetorPi;
+    vetorS;
+];
+deltaZ = iteracaoMetodoNewton(
+    wcc, Alpha, Pd0,
+    PgMin, PgMax, Tmin, Tmax,
+    barraVTheta,
+    DeltaPd, Pg, Theta,
+    mu, Lambdas, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
+    Um, Ag, A, B, Xinv,
+    Winv
+);
