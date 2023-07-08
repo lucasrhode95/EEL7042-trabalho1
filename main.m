@@ -103,7 +103,7 @@ barraVTheta = 1;
 
 
 %% MPI
-limiteIteracoes    = 100;
+limiteIteracoes    = 15;
 sigmaInterioridade = 0.9995;
 betaAceleracao     = 10;
 toleranciaPz       = 1e-6;
@@ -111,8 +111,8 @@ toleranciaMu       = 1e-6;
 
 % definição de chute inicial
 mu      = 0.1;
-Pg      = (PgMax+PgMin)/2; % geração a 50% da capacidade
-DeltaPd = 0.05*Um'*Pd0;    % corte de carga inicial = 5%
+Pg      = (PgMax + PgMin)/2; % geração a 50% da capacidade
+DeltaPd = [0.1 0.1 0.1]';    % corte de carga inicial = 5%
 Theta   = zeros(nr, 1);    % ângulos = 0 rad
 Lambda  = ones(nigual, 1); % lambdas = 1;
 
