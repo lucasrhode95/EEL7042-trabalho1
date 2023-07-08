@@ -1,5 +1,6 @@
 clear();
 clc();
+addpath(genpath("helpers_comuns"));
 addpath(genpath("helpers_topologia_do_sistema"));
 addpath(genpath("helpers_metodo_newton"));
 addpath(genpath("helpers_evaluar_lagrangeano_e_restricoes"));
