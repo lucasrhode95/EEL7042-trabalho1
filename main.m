@@ -6,8 +6,6 @@ nc     = 3; % número de cargas
 ng     = 3; % número de geradores
 wcc    = 1; % índice de ponderação
 nl     = 6; % número de linhas
-nigual = nb; % número de restrições de igualdade;
-ndes   = 2*ng + 2*nl + nc; % número de restrições de desigualdade
 
 % peso dos cortes de carga ($/MWpu)
 % (problema não deu valores, assumindo peso uniforme = 1)
@@ -99,7 +97,6 @@ barraVTheta = 1;
 Bred        = removeColuna(barraVTheta, B);
 Ared        = removeLinha(barraVTheta, A);
 Agred       = removeLinha(barraVTheta, Ag);
-
 
 
 %% MPI
