@@ -33,7 +33,7 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
     % Obs: transformamos o problema para que só houvessem PI máx e nenhum PI min
     L_u_pi = [
     %       pi1           pi2           pi3           pi4           pi5
-        zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl), zeros(nc,nc); % deltaPd
+        zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl),  -eye(nc,nc); % deltaPd
          -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
         zeros(nr,ng),   -Ared*Xinv, zeros(nr,ng),    Ared*Xinv, zeros(nr,nc); % Theta
     ];
