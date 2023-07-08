@@ -1,3 +1,5 @@
+% gradiente de L com relação às variáveis de otimização
+% ∇L(u)
 function Lu = evaluarGradienteLagrangeano(
     wcc, Alpha, Um, Lambda,
     Ag, B, A, Xinv,
