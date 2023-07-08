@@ -91,7 +91,7 @@ Agred = removeLinha(barraVTheta, Ag);
 %% MPI
 mu      = 0.1;
 Pg      = (PgMax+PgMin)/2;
-deltaPd = zeros(nc, 1); % corte de carga inicial = 0
+DeltaPd = 0.05*Um'*Pd0; % corte de carga inicial = 5%
 Theta   = zeros(nr, 1);
 Lambdas = ones(nr, 1);
 
@@ -101,7 +101,7 @@ s1 = Pg - PgMin;
 s2 = -Tmin;
 s3 = -Pg + PgMax;
 s4 = Tmax;
-s5 = deltaPd;
+s5 = DeltaPd;
 vetorS = [s1; s2; s3; s4; s5];
 % variáveis de folga PI
 pi1 = s1./mu;
