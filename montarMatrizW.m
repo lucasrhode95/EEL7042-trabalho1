@@ -12,8 +12,8 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
     nl     = size(Ared)(2);
     nr     = nb - 1;
     nigual = nb;
-    nvar   = nc + ng + nr; % quantidade de variáveis otimizadas (ou dimensão do vetor u)
-    ndes   = size(vetorS)(1);
+    nvar   = nc + ng + nr;    % quantidade de variáveis otimizadas (ou dimensão do vetor u)
+    ndes   = size(vetorS)(1); % quantidade de restrições de desigualdade
 
 
     L_u_u = [
@@ -34,7 +34,7 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
     L_u_pi = [
     %       pi1           pi2           pi3           pi4           pi5
         zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl), zeros(nc,nc); % deltaPd
-        -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
+         -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
         zeros(nr,ng),   -Ared*Xinv, zeros(nr,ng),    Ared*Xinv, zeros(nr,nc); % Theta
     ];
 
@@ -48,8 +48,8 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
     L_s_s   = diag(vetorPi);
 
     W = [
-        L_u_u   L_u_y   L_u_pi  L_u_s;
-        L_u_y'  L_y_y   L_y_pi  L_y_s;
+        L_u_u    L_u_y   L_u_pi  L_u_s;
+        L_u_y'   L_y_y   L_y_pi  L_y_s;
         L_u_pi'  L_y_pi' L_pi_pi L_pi_s;
         L_u_s'   L_y_s'  L_s_pi  L_s_s;
     ];
