@@ -3,45 +3,31 @@ function DeltaZ = iteracaoMetodoNewton(
     PgMin, PgMax, Tmin, Tmax,
     barraVTheta,
     DeltaPd, Pg, Theta,
-    mu, Lambdas, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
+    mu, Lambda, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
     Um, Ag, A, B, Xinv,
     Winv
 )
-    vetorPi = [
-        pi1; pi2; pi3; pi4; pi5;
-    ];
-    vetorS = [
-        s1; s2; s3; s4; s5;
-    ];
-    Bred = removeColuna(barraVTheta, B);
-    Ared = removeLinha(barraVTheta, A);
+    % reconstrução de variáveis auxiliares
+    vetorPi = [pi1; pi2; pi3; pi4; pi5];
+    vetorS  = [s1; s2; s3; s4; s5];
+    Bred    = removeColuna(barraVTheta, B);
+    Ared    = removeLinha(barraVTheta, A);
+    ndes    = size(vetorS)(1); % quantidade de restrições de desigualdade
+    e       = ones(ndes, 1);
 
-    ndes = size(vetorS)(1); % quantidade de restrições de desigualdade
-    e    = ones(ndes, 1);
+    % matriz hessiana
+    W    = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
+    Winv = inv(W);
 
-    L_u = [
-        wcc*Alpha + Um'*Lambdas - pi5;
-        Ag'*Lambdas + pi3 - pi1;
-        -B*Lambdas + A*Xinv*(pi4 - pi2);
-    ];
-
-    G_u = Ag*Pg - (Pd0 - Um*DeltaPd) - Bred*Theta;
-    G_u = removeLinha(barraVTheta, G_u);
-
-    H_u = [
-        s1 - Pg + PgMin;
-        s2 - Xinv*Ared'*Theta + Tmin;
-        s3 + Pg - PgMax;
-        s4 + Xinv*Ared'*Theta - Tmax;
-        s5 - DeltaPd;
-    ];
-
+    L_u = evaluarGradienteLagrangeano(wcc, Alpha, Um, Lambda, Ag, B, A, Xinv, pi1, pi2, pi3, pi4, pi5);
+    G_u = evaluarRestricoesIgualdade(Ag, Pg, Pd0, Um, DeltaPd, Bred, Theta);
+    H_u = evaluarRestricoesDesigualdade(Pg, PgMin, Xinv, Ared, Theta, Tmin, PgMax, Tmax, DeltaPd, s1, s2, s3, s4, s5);
     S_u = diag(vetorS)*vetorPi - mu*e;
 
-    % p(z) = dL/dx = 0
+    % p(z) + W*dz = 0
     Pz = [
         L_u;
-        G_u;
+        removeLinha(barraVTheta, G_u);
         H_u;
         S_u;
     ];
