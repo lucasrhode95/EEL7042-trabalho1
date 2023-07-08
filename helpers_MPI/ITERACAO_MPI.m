@@ -1,4 +1,3 @@
-
 % variáveis de folga S
 s1     = Pg - PgMin;
 s2     = -Tmin;
@@ -6,6 +5,7 @@ s3     = -Pg + PgMax;
 s4     = Tmax;
 s5     = DeltaPd;
 vetorS = [s1; s2; s3; s4; s5];
+
 % variáveis de folga PI
 pi1     = s1./mu;
 pi2     = s2./mu;

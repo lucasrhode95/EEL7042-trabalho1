@@ -105,7 +105,7 @@ barraVTheta = 1;
 %% MPI
 limiteIteracoes    = 100;
 sigmaInterioridade = 0.9995;
-betaAceleracao     = 50;
+betaAceleracao     = 10;
 toleranciaPz       = 1e-6;
 toleranciaMu       = 1e-6;
 
@@ -117,20 +117,19 @@ Theta   = zeros(nr, 1);    % ângulos = 0 rad
 Lambda  = ones(nigual, 1); % lambdas = 1;
 
 iteracoes        = 0;
-deveParar = false;
-while !deveParar
+alcancouPrecisao = false;
+while (iteracoes < limiteIteracoes) && ~alcancouPrecisao
     iteracoes++;
 
+    disp("-----");
     ITERACAO_MPI
 
-    alcancouLimiteIteracoes = iteracoes >= limiteIteracoes; % atingiu limite de iteracoes?
-    alcancouPrecisao        = norm(Pz) <= toleranciaPz && mu <= toleranciaMu; % atingiu precisão desejada?
-    deveParar               = alcancouLimiteIteracoes || alcancouPrecisao;
-
-    if alcancouLimiteIteracoes && !alcancouPrecisao
-        fprintf("[AVISO] PROBLEMA NÃO CONVERGIU DEPOIS DE %d ITERAÇÕES\n\n", limiteIteracoes);
-    endif
+    alcancouPrecisao = norm(Pz) <= toleranciaPz && mu <= toleranciaMu; % atingiu precisão desejada?
 end
+
+if !alcancouPrecisao
+    fprintf("[AVISO] PROBLEMA NÃO CONVERGIU DEPOIS DE %d ITERAÇÕES\n\n", limiteIteracoes);
+endif
 
 printVetor("ΔPd", DeltaPd);
 printVetor(" Pg", Pg);
