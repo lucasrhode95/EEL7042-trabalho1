@@ -46,11 +46,12 @@ deltaZ = iteracaoMetodoNewton(
 );
 deltaZ = sigmaInterioridade*deltaZ; % para garantir interioridade, conforme apostila
 
-% separar variáveis
-deltaU      = deltaZ(1:dimU);
-deltaS      = deltaZ((1:dimS) + dimU);
-deltaLambda = deltaZ((1:dimY) + dimS);
-deltaPi     = deltaZ((1:dimPi) + dimY);
+% separar variáveis MPI
+next        = criarIterador(deltaZ);
+deltaU      = next(dimU);
+deltaS      = next(dimS);
+deltaLambda = next(dimY);
+deltaPi     = next(dimPi);
 
 % calcular sigmas e mu
 alfaPrimal = calcularAlfa(vetorS, deltaS);
@@ -71,3 +72,9 @@ Pz  = evaluarPz(
     mu,
     barraVTheta
 );
+
+% separar/atualizar variáveis originais
+next    = criarIterador(u);
+DeltaPd = next(dimDeltaPd);
+Pg      = next(dimPg);
+Theta   = next(dimTheta);
