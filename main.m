@@ -4,6 +4,7 @@ addpath(genpath("helpers_comuns"));
 addpath(genpath("helpers_topologia_do_sistema"));
 addpath(genpath("helpers_metodo_newton"));
 addpath(genpath("helpers_evaluar_lagrangeano_e_restricoes"));
+addpath(genpath("helpers_MPI"));
 
 nb     = 5; % número de barras
 nc     = 3; % número de cargas
@@ -102,6 +103,12 @@ barraVTheta = 1;
 
 
 %% MPI
+limiteIteracoes    = 100;
+sigmaInterioridade = 0.9995;
+betaAceleracao     = 50;
+toleranciaPz       = 1e-6;
+toleranciaMu       = 1e-6;
+
 % definição de chute inicial
 mu      = 0.1;
 Pg      = (PgMax+PgMin)/2; % geração a 50% da capacidade
@@ -109,40 +116,24 @@ DeltaPd = 0.05*Um'*Pd0;    % corte de carga inicial = 5%
 Theta   = zeros(nr, 1);    % ângulos = 0 rad
 Lambda  = ones(nigual, 1); % lambdas = 1;
 
-% variáveis de folga S
-s1     = Pg - PgMin;
-s2     = -Tmin;
-s3     = -Pg + PgMax;
-s4     = Tmax;
-s5     = DeltaPd;
-vetorS = [s1; s2; s3; s4; s5];
-% variáveis de folga PI
-pi1     = s1./mu;
-pi2     = s2./mu;
-pi3     = s3./mu;
-pi4     = s4./mu;
-pi5     = s5./mu;
-vetorPi = [pi1; pi2; pi3; pi4; pi5];
+iteracoes        = 0;
+deveParar = false;
+while !deveParar
+    iteracoes++;
 
-% método de Newton
-u = [
-    DeltaPd; % dimDeltaPd
-    Pg;      % dimPg
-    Theta;   % dimTheta
-];
-% deltaZ = [
-%     deltaU;  % dimU
-%     deltaY;  % dimY
-%     deltaPi; % dimPi
-%     deltaS;  % dimS
-% ];
-deltaZ = iteracaoMetodoNewton(
-    wcc, Alpha, Pd0,
-    PgMin, PgMax, Tmin, Tmax,
-    barraVTheta,
-    DeltaPd, Pg, Theta,
-    mu, Lambda, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
-    Um, Ag, A, B, Xinv
-);
+    ITERACAO_MPI
+
+    alcancouLimiteIteracoes = iteracoes >= limiteIteracoes; % atingiu limite de iteracoes?
+    alcancouPrecisao        = norm(Pz) <= toleranciaPz && mu <= toleranciaMu; % atingiu precisão desejada?
+    deveParar               = alcancouLimiteIteracoes || alcancouPrecisao;
+
+    if alcancouLimiteIteracoes && !alcancouPrecisao
+        fprintf("[AVISO] PROBLEMA NÃO CONVERGIU DEPOIS DE %d ITERAÇÕES\n\n", limiteIteracoes);
+    endif
+end
+
+printVetor("ΔPd", DeltaPd);
+printVetor(" Pg", Pg);
+printVetor("  θ", Theta);
 
 restoredefaultpath();
