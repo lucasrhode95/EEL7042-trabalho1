@@ -76,3 +76,82 @@ A(5, 6) = -1; % barra 5
 
 % matriz B
 B = montarMatrizB(diag(X), A);
+
+%% Barra Vθ
+nr = nb - 1;
+barraVTheta = 1;
+Bred = removeColuna(barraVTheta, B);
+Ared = removeLinha(barraVTheta, A);
+Agred = removeLinha(barraVTheta, Ag);
+
+
+
+%% MPI
+mu      = 0.1;
+Pg      = (PgMax+PgMin)/2;
+deltaPd = zeros(nc, 1); % corte de carga inicial = 0
+Theta   = zeros(nr, 1); % SERÁ QUE TEM QUE CORTAR???????????????
+Lambdas = ones(nr, 1);
+
+% variáveis de folga S
+s1 = Pg - PgMin;
+s2 = -Tmin;
+s3 = -Pg + PgMax;
+s4 = Tmax;
+s5 = deltaPd;
+S = [s1; s2; s3; s4; s5];
+% variáveis de folga PI
+pi1 = s1./mu;
+pi2 = s2./mu;
+pi3 = s3./mu;
+pi4 = s4./mu;
+pi5 = s5./mu;
+PI = [pi1; pi2; pi3; pi4; pi5];
+
+%% MÉTODO DE NEWTON
+z = [
+    deltaPd;
+    Pg;
+    Theta;
+    Lambdas;
+    PI;
+    S;
+];
+
+% Segunda derivada de L(u) com relação à u.
+% Dimensões: (nc + ng + nr) X (nc + ng + nr)
+L_u_u = [
+%    deltaPd           Pg           Theta
+    zeros(nc,nc), zeros(nc,ng), zeros(nc,nr); % deltaPd
+    zeros(ng,nc), zeros(ng,ng), zeros(ng,nr); % Pg
+    zeros(nr,nc), zeros(nr,ng), zeros(nr,nr); % Theta
+];
+
+% Segunda derivada de L(u) com relação à Lambda.
+% Dimensões: (nc + ng + nr) X nb
+L_u_y = [
+%    lambda
+       Um';  % deltaPd
+       Ag';  % Pg
+    -Bred';  % Theta
+];
+
+% Segunda derivada de L(u) com relação à PI.
+% Dimensões: (nc + ng + nr) X ndes
+%
+% Obs: transformamos o problema para que só houvessem PI máx e nenhum PI min
+L_u_pi = [
+%       pi1           pi2           pi3           pi4           pi5
+    zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl), zeros(nc,nc); % deltaPd
+     -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
+    zeros(nr,ng),   -Ared*Xinv, zeros(nr,ng),    Ared*Xinv, zeros(nr,nc); % Theta
+];
+
+cLuu = size(L_u_u)(2);
+cLuy  = size(L_u_y)(2);
+cLupi = size(L_u_pi)(2);
+W = [
+      L_u_u,                     L_u_y,             L_u_pi;
+     L_u_y',         zeros(cLuy, cLuy),  zeros(cLuy, cLupi);
+     L_u_pi',        zeros(cLupi, cLuy), zeros(cLupi, cLupi);
+]
