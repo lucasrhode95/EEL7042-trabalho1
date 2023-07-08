@@ -15,10 +15,13 @@ alpha = ones(nc, 1);
 
 %% DEMANDA
 % matriz de demanda inicial
-Pd0 = zeros(nb, 1);
-Pd0(1) = 1;   % carga 1 na barra 1
-Pd0(2) = 2.5; % carga 2 na barra 2
-Pd0(3) = 1;   % carga 3 na barra 3
+Pd0 = [
+    1;   % carga 1 na barra 1
+    2.5; % carga 2 na barra 2
+    1;   % carga 3 na barra 3
+    0;   % nenhuma carga na barra 4
+    0;   % nenhuma carga na barra 5
+]
 % matriz de incidência de cargas cortáveis
 Um = zeros(nb, nc);
 Um(1,1) = 1; % carga 1 na barra 1
@@ -27,8 +30,16 @@ Um(3,3) = 1; % carga 3 na barra 3
 
 %% GERADORES
 % limites geradores
-PgMax = [5, 3, 5]';
-PgMin = [0, 0, 0]';
+PgMax = [
+    5;
+    3;
+    5;
+];
+PgMin = [
+    0;
+    0;
+    0;
+];
 % matriz de incidência de geradores
 Ag = zeros(nb, ng);
 Ag(1,1) = 1; % gerador 1 na barra 1
@@ -37,22 +48,25 @@ Ag(4,3) = 1; % gerador 3 na barra 4
 
 %% LINHAS
 % impedância das linhas
-X = zeros(nl, nl);
-X(1, 1) = 0.1680; % de 1 para 2
-X(2, 2) = 0.1260; % de 2 para 3
-X(3, 3) = 0.2100; % de 3 para 5
-X(4, 4) = 0.3360; % de 3 para 4
-X(5, 5) = 0.2520; % de 5 para 4
-X(6, 6) = 0.1260; % de 5 para 1
+impedanciasDeLinha = [
+    0.1680; % de 1 para 2
+    0.1260; % de 2 para 3
+    0.2100; % de 3 para 5
+    0.3360; % de 3 para 4
+    0.2520; % de 5 para 4
+    0.1260; % de 5 para 1
+];
+X    = diag(impedanciasDeLinha);
 Xinv = inv(X);
 % limite de fluxo das linhas
-Tmax = zeros(nl, 1);
-Tmax(1) = 1.5; % de 1 para 2
-Tmax(2) = 1.5; % de 2 para 3
-Tmax(3) = 1.5; % de 3 para 5
-Tmax(4) = 1.5; % de 3 para 4
-Tmax(5) = 1.5; % de 5 para 4
-Tmax(6) = 0.6; % de 5 para 1
+Tmax = [
+    1.5; % de 1 para 2
+    1.5; % de 2 para 3
+    1.5; % de 3 para 5
+    1.5; % de 3 para 4
+    1.5; % de 5 para 4
+    0.6; % de 5 para 1
+];
 Tmin = -Tmax;
 
 % matrix incidência barra-ramo A(barra, linha)
@@ -77,7 +91,7 @@ A(1, 6) =  1; % barra 1
 A(5, 6) = -1; % barra 5
 
 % matriz B
-B = montarMatrizB(diag(X), A);
+B = montarMatrizB(impedanciasDeLinha, A);
 
 %% Barra Vθ
 nr = nb - 1; % quantidade de barras menos barra Vθ
