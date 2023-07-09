@@ -9,12 +9,12 @@ addpath(genpath("helpers_MPI"));
 nb     = 5; % número de barras
 nc     = 3; % número de cargas
 ng     = 3; % número de geradores
-wcc    = 1; % índice de ponderação
 nl     = 6; % número de linhas
 nigual = 5; % número de restrições de igualdade (se adicionar mais restrições, é preciso atualizar a matriz W)
 
 % peso dos cortes de carga ($/MWpu)
 % (problema não deu valores, assumindo peso uniforme = 1)
+wcc   = 1; % índice de ponderação
 Alpha = ones(nc, 1);
 
 %% DEMANDA
@@ -103,36 +103,62 @@ barraVTheta = 1;
 
 
 %% MPI
-limiteIteracoes    = 15;
+% fatores de aceleração
 sigmaInterioridade = 0.9995;
-betaAceleracao     = 10;
-toleranciaPz       = 1e-6;
-toleranciaMu       = 1e-6;
+betaAceleracao     = 20;
 
 % definição de chute inicial
 mu      = 0.1;
-Pg      = (PgMax + PgMin)/2; % geração a 50% da capacidade
-DeltaPd = [0.1 0.1 0.1]';    % corte de carga inicial = 5%
-Theta   = zeros(nr, 1);    % ângulos = 0 rad
+Pg      = [2.226354; 1.45627; 0.81737];
+DeltaPd = 1e-6*[1 1 1]';
+Theta   = 0*[-0.213839; -0.059219; 0.0956697; 0.0058589 ];
 Lambda  = ones(nigual, 1); % lambdas = 1;
+% variáveis de folga S
+s1     = Pg - PgMin;
+s2     = -Tmin;
+s3     = -Pg + PgMax;
+s4     = Tmax;
+s5     = DeltaPd;
+vetorS = [s1; s2; s3; s4; s5];
+% variáveis de folga PI
+pi1     = s1./mu;
+pi2     = s2./mu;
+pi3     = s3./mu;
+pi4     = s4./mu;
+pi5     = s5./mu;
+vetorPi = [pi1; pi2; pi3; pi4; pi5];
+
+u = [
+    DeltaPd; % dimDeltaPd
+    Pg;      % dimPg
+    Theta;   % dimTheta
+];
+
+% condições de parada
+limiteIteracoes = 100;
+toleranciaPz    = 1e-6;
+toleranciaMu    = 1e-6;
 
 iteracoes        = 0;
 alcancouPrecisao = false;
 while (iteracoes < limiteIteracoes) && ~alcancouPrecisao
     iteracoes++;
 
-    disp("-----");
     ITERACAO_MPI
 
     alcancouPrecisao = norm(Pz) <= toleranciaPz && mu <= toleranciaMu; % atingiu precisão desejada?
 end
 
-if !alcancouPrecisao
+if alcancouPrecisao
+    fprintf("Solução em %d iterações:\n", iteracoes);
+else
     fprintf("[AVISO] PROBLEMA NÃO CONVERGIU DEPOIS DE %d ITERAÇÕES\n\n", limiteIteracoes);
 endif
 
 printVetor("ΔPd", DeltaPd);
 printVetor(" Pg", Pg);
 printVetor("  θ", Theta);
+sum(DeltaPd)
+sum(Pg)
 
 restoredefaultpath();

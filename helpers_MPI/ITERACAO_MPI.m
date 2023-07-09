@@ -1,38 +1,16 @@
-% variáveis de folga S
-s1     = Pg - PgMin;
-s2     = -Tmin;
-s3     = -Pg + PgMax;
-s4     = Tmax;
-s5     = DeltaPd;
-vetorS = [s1; s2; s3; s4; s5];
-
-% variáveis de folga PI
-pi1     = s1./mu;
-pi2     = s2./mu;
-pi3     = s3./mu;
-pi4     = s4./mu;
-pi5     = s5./mu;
-vetorPi = [pi1; pi2; pi3; pi4; pi5];
-
 % contagem das variáveis primais e duais
 dimDeltaPd = size(DeltaPd)(1);
 dimPg      = size(Pg)(1);
 dimTheta   = size(Theta)(1);
 dimU       = dimDeltaPd + dimPg + dimTheta;
-dimY       = size(Lambda)(1);
+dimLambda  = size(Lambda)(1);
 dimPi      = size(vetorPi)(1);
 dimS       = size(vetorS)(1);
-dimVar     = dimU + dimY + dimPi + dimS;
+dimVar     = dimU + dimLambda + dimPi + dimS;
 
-% método de Newton
-u = [
-    DeltaPd; % dimDeltaPd
-    Pg;      % dimPg
-    Theta;   % dimTheta
-];
 % deltaZ = [
 %     deltaU;  % dimU
-%     deltaY;  % dimY
+%     deltaY;  % dimLambda
 %     deltaPi; % dimPi
 %     deltaS;  % dimS
 % ];
@@ -49,20 +27,42 @@ deltaZ = sigmaInterioridade*deltaZ; % para garantir interioridade, conforme apos
 % separar variáveis MPI
 next        = criarIterador(deltaZ);
 deltaU      = next(dimU);
-deltaS      = next(dimS);
-deltaLambda = next(dimY);
+deltaLambda = next(dimLambda);
 deltaPi     = next(dimPi);
+deltaS      = next(dimS);
 
 % calcular sigmas e mu
 alfaPrimal = calcularAlfa(vetorS, deltaS);
 alfaDual   = calcularAlfa(vetorPi, deltaPi);
-mu         = calcularMu(vetorS, vetorPi, dimVar, betaAceleracao);
 
 % atualizar variáveis
-u       =       u + alfaPrimal*deltaU;
-vetorS  =  vetorS + alfaPrimal*deltaS;
-Lambda  =  Lambda + alfaDual*deltaLambda;
-vetorPi = vetorPi + alfaDual*deltaPi;
+u       += alfaPrimal*deltaU;
+Lambda  += alfaDual*deltaLambda;
+vetorPi += alfaDual*deltaPi;
+vetorS  += alfaPrimal*deltaS;
+
+% atualizar mi
+mu = calcularMu(vetorS, vetorPi, dimVar, betaAceleracao);
+
+% separar/atualizar variáveis originais
+next    = criarIterador(u);
+DeltaPd = next(dimDeltaPd);
+Pg      = next(dimPg);
+Theta   = next(dimTheta);
+
+next = criarIterador(vetorS);
+s1 = next(size(s1)(1));
+s2 = next(size(s2)(1));
+s3 = next(size(s3)(1));
+s4 = next(size(s4)(1));
+s5 = next(size(s5)(1));
+
+next = criarIterador(vetorPi);
+pi1 = next(size(pi1)(1));
+pi2 = next(size(pi2)(1));
+pi3 = next(size(pi3)(1));
+pi4 = next(size(pi4)(1));
+pi5 = next(size(pi5)(1));
 
 % condição de tolerância
 Pz  = evaluarPz(
@@ -72,9 +72,3 @@ Pz  = evaluarPz(
     mu,
     barraVTheta
 );
-
-% separar/atualizar variáveis originais
-next    = criarIterador(u);
-DeltaPd = next(dimDeltaPd);
-Pg      = next(dimPg);
-Theta   = next(dimTheta);
