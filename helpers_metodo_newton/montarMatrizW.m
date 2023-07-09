@@ -43,6 +43,7 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
     L_y_pi  = zeros(nigual, ndes);
     L_y_s   = zeros(nigual, ndes);
     L_pi_pi = zeros(ndes, ndes);
+    % L_pi_s  = diag(vetorS);
     L_pi_s  = eye(ndes, ndes);
     L_s_pi  = diag(vetorS);
     L_s_s   = diag(vetorPi);
