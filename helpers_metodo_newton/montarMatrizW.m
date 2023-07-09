@@ -25,9 +25,9 @@ function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
 
     L_u_y = [
     %    lambda
-        Um';  % deltaPd
-        Ag';  % Pg
-        -Bred';  % Theta
+        -Um';  % deltaPd
+        -Ag';  % Pg
+        Bred';  % Theta
     ];
 
     % Obs: transformamos o problema para que só houvessem PI máx e nenhum PI min
