@@ -105,13 +105,13 @@ barraVTheta = 1;
 %% MPI
 % fatores de aceleração
 sigmaInterioridade = 0.9995;
-betaAceleracao     = 20;
+betaAceleracao     = 10;
 
 % definição de chute inicial
 mu      = 0.1;
-Pg      = [2.226354; 1.45627; 0.81737];
-DeltaPd = 1e-6*[1 1 1]';
-Theta   = 0*[-0.213839; -0.059219; 0.0956697; 0.0058589 ];
+Pg      = (PgMin + PgMax)/2;
+DeltaPd = [1 1 1]';
+Theta   = zeros(nr, 1);
 Lambda  = ones(nigual, 1); % lambdas = 1;
 % variáveis de folga S
 s1     = Pg - PgMin;
