@@ -13,8 +13,7 @@ function DeltaZ = iteracaoMetodoNewton(
     Ared    = removeLinha(barraVTheta, A);
 
     % matriz hessiana
-    W    = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
-    Winv = inv(W);
+    W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
 
     % p(z) + W*dz = 0
     Pz = evaluarPz(
@@ -25,5 +24,5 @@ function DeltaZ = iteracaoMetodoNewton(
         barraVTheta
     );
 
-    DeltaZ = -Winv*Pz;
+    DeltaZ = -W\Pz;
 end
