@@ -1,3 +1,8 @@
+% s1 = s_Pgmin
+% s2 = s_Tmin
+% s3 = s_Pgmax
+% s4 = s_Tmax
+% s5 = s_Pdmin
 function H = evaluarRestricoesDesigualdade(
     Pg, PgMin, Xinv, Ared, Theta, Tmin, PgMax, Tmax, DeltaPd,
     s1, s2, s3, s4, s5
