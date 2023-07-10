@@ -128,12 +128,6 @@ pi4     = s4./mu;
 pi5     = s5./mu;
 vetorPi = [pi1; pi2; pi3; pi4; pi5];
 
-u = [
-    DeltaPd; % dimDeltaPd
-    Pg;      % dimPg
-    Theta;   % dimTheta
-];
-
 % condições de parada
 limiteIteracoes = 100;
 toleranciaPz    = 1e-6;

@@ -1,3 +1,9 @@
+u = [
+    DeltaPd; % dimDeltaPd
+    Pg;      % dimPg
+    Theta;   % dimTheta
+];
+
 % contagem das variáveis primais e duais
 dimDeltaPd = size(DeltaPd)(1);
 dimPg      = size(Pg)(1);
@@ -8,11 +14,11 @@ dimPi      = size(vetorPi)(1);
 dimS       = size(vetorS)(1);
 dimVar     = dimU + dimLambda + dimPi + dimS;
 
-% deltaZ = [
-%     deltaU;  % dimU
-%     deltaY;  % dimLambda
-%     deltaPi; % dimPi
-%     deltaS;  % dimS
+% Z = [
+%     U;  % dimU
+%     Y;  % dimLambda
+%     Pi; % dimPi
+%     S;  % dimS
 % ];
 deltaZ = iteracaoMetodoNewton(
     wcc, Alpha, Pd0,
