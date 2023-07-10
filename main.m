@@ -121,11 +121,11 @@ s4     = Tmax;
 s5     = DeltaPd;
 vetorS = [s1; s2; s3; s4; s5];
 % variáveis de folga PI
-pi1     = s1./mu;
-pi2     = s2./mu;
-pi3     = s3./mu;
-pi4     = s4./mu;
-pi5     = s5./mu;
+pi1     = mu./s1;
+pi2     = mu./s2;
+pi3     = mu./s3;
+pi4     = mu./s4;
+pi5     = mu./s5;
 vetorPi = [pi1; pi2; pi3; pi4; pi5];
 
 % condições de parada
