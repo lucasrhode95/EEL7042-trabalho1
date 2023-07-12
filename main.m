@@ -57,7 +57,7 @@ betaAceleracao     = 10;
 % definição de chute inicial
 mu      = 0.1;
 Pg      = (PgMin + PgMax)/2;
-Lambda  = ones(nigual, 1); % lambdas = 1;
+Lambda  = ones(nT, 1); % lambdas = 1;
 % variáveis de folga S
 s1     = Pg - PgMin;
 s2     = Cap - Mat_hor*Pg;
@@ -69,13 +69,14 @@ pi1     = mu./s1;
 pi2     = mu./s2;
 pi3     = mu./s3;
 pi4     = mu./s4;
-vetorPi = [pi1; pi2; pi3; pi4;];
+vetorPi = [pi1; pi2; pi3; pi4];
 
 % condições de parada
 limiteIteracoes = 100;
 toleranciaPz    = 1e-6;
 toleranciaMu    = 1e-6;
 
+u = Pg;
 iteracoes        = 0;
 alcancouPrecisao = false;
 while (iteracoes < limiteIteracoes) && ~alcancouPrecisao
