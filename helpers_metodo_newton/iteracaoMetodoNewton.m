@@ -1,27 +1,18 @@
 function DeltaZ = iteracaoMetodoNewton(
-    wcc, Alpha, Pd0,
-    PgMin, PgMax, Tmin, Tmax,
-    barraVTheta,
-    DeltaPd, Pg, Theta,
-    mu, Lambda, pi1, pi2, pi3, pi4, pi5, s1, s2, s3, s4, s5,
-    Um, Ag, A, B, Xinv
+    Q, Pg, b, Iaux, Mat_hor, Pgsolar, Pd, PgMin, Cap, PgMax,
+    mu, Lambda, pi1, pi2, pi3, pi4, s1, s2, s3, s4
 )
     % reconstrução de variáveis auxiliares
-    vetorPi = [pi1; pi2; pi3; pi4; pi5];
-    vetorS  = [s1; s2; s3; s4; s5];
-    Bred    = removeColuna(barraVTheta, B);
-    Ared    = removeLinha(barraVTheta, A);
+    vetorPi = [pi1; pi2; pi3; pi4];
+    vetorS  = [s1; s2; s3; s4];
 
     % matriz hessiana
-    W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi);
+    W = montarMatrizW(Q, Iaux, Mat_hor, vetorS, vetorPi);
 
     % p(z) + W*dz = 0
     Pz = evaluarPz(
-        wcc, Alpha, Um, Lambda, Ag, B, A, Xinv, pi1, pi2, pi3, pi4, pi5,
-        Pg, Pd0, DeltaPd, Theta,
-        PgMin, Tmin, PgMax, Tmax, s1, s2, s3, s4, s5,
-        mu,
-        barraVTheta
+        Q, Pg, b, Iaux, Mat_hor, Pgsolar, Pd, PgMin, Cap, PgMax,
+        mu, Lambda, pi1, pi2, pi3, pi4, s1, s2, s3, s4
     );
 
     DeltaZ = -W\Pz;
