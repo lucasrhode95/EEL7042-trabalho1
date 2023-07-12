@@ -51,9 +51,6 @@ pi4 = next(size(pi4)(1));
 
 % condição de tolerância
 Pz  = evaluarPz(
-    wcc, Alpha, Um, Lambda, Ag, B, A, Xinv, pi1, pi2, pi3, pi4, pi5,
-    Pg, Pd0, DeltaPd, Theta,
-    PgMin, Tmin, PgMax, Tmax, s1, s2, s3, s4, s5,
-    mu,
-    barraVTheta
+    Q, Pg, b, Iaux, Mat_hor, Pgsolar, Pd, PgMin, Cap, PgMax,
+    mu, Lambda, pi1, pi2, pi3, pi4, s1, s2, s3, s4
 );
