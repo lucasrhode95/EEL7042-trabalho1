@@ -3,40 +3,17 @@
 %
 % Uma grande melhoria de performance seria possível mantendo um cache da matriz
 % W gerada, e somente atualizar as células referentes ao vetorS e vetorPi.
-function W = montarMatrizW(Um, Ag, Ared, Xinv, Bred, vetorS, vetorPi)
-    % para não precisar passar todos argumentos, inferimos usando as dimensões
-    % dos argumentos recebidos
-    nb     = size(Ag)(1);
-    ng     = size(Ag)(2);
-    nc     = size(Um)(2);
-    nl     = size(Ared)(2);
-    nr     = nb - 1;
-    nigual = nb;
-    nvar   = nc + ng + nr;    % quantidade de variáveis otimizadas (ou dimensão do vetor u)
-    ndes   = size(vetorS)(1); % quantidade de restrições de desigualdade
+function W = montarMatrizW(Q, Iaux, Mat_hor, vetorS, vetorPi)
+    nigual = size(Mat_hor)(1);
+    nvar   = size(Mat_hor)(2);
+    ndes   = size(vetorS)(1);
 
+    L_u_u = 2*Q;
 
-    L_u_u = [
-    %    deltaPd           Pg           Theta
-        zeros(nc,nc), zeros(nc,ng), zeros(nc,nr); % deltaPd
-        zeros(ng,nc), zeros(ng,ng), zeros(ng,nr); % Pg
-        zeros(nr,nc), zeros(nr,ng), zeros(nr,nr); % Theta
-    ];
-
-    L_u_y = [
-    %    lambda
-        Um';    % deltaPd
-        Ag';    % Pg
-        -Bred'; % Theta
-    ];
+    L_u_y = Iaux';
 
     % Obs: transformamos o problema para que só houvessem PI máx e nenhum PI min
-    L_u_pi = [
-    %       pi1           pi2           pi3           pi4           pi5
-        zeros(nc,ng), zeros(nc,nl), zeros(nc,ng), zeros(nc,nl),  -eye(nc,nc); % deltaPd
-         -eye(ng,ng), zeros(ng,nl),   eye(ng,ng), zeros(ng,nl), zeros(ng,nc); % Pg
-        zeros(nr,ng),   -Ared*Xinv, zeros(nr,ng),    Ared*Xinv, zeros(nr,nc); % Theta
-    ];
+    L_u_pi = [-eye(nvar,nvar), Mat_hor, eye(nvar,nvar), -Mat_hor];
 
     L_u_s   = zeros(nvar, ndes);
     L_y_y   = zeros(nigual, nigual);
